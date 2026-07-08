@@ -9,22 +9,23 @@
 #   - 이 계정에 대상 VM의 Contributor 이상 권한이 있을 것
 #     (Microsoft.Compute/virtualMachines/runCommands/write)
 #
-# 실행: bash 20_register_db_users.sh
+# 사용법: 아래 RG / VM_NAME / MYSQL_FQDN / ADMIN_LOGIN / USERS를
+#         본인 환경(terraform.tfvars 값과 동일하게)에 맞게 채운 뒤 실행
+#         bash 20_register_db_users.sh
 # ============================================================
-
 set -e
 
-RG="team604tuna"
+RG="<terraform.tfvars의 rgname>"                       # 예: team604tuna
 VM_NAME="tuna-web-vm"
-MYSQL_FQDN="tuna4-mysql.mysql.database.azure.com"
+MYSQL_FQDN="<terraform output mysql_fqdn 값>"           # 예: tuna4-mysql.mysql.database.azure.com
 DB_NAME="tuna_db"
-ADMIN_LOGIN="student618_mscsschool.onmicrosoft.com#EXT#@sim981naver.onmicrosoft.com"
+ADMIN_LOGIN="<terraform.tfvars의 aad_admin_login 값>"
 
-# 등록할 사용자 목록: "로그인명:Object ID"
+# 등록할 사용자 목록: "로그인명:Object ID" (terraform.tfvars의 extra_db_users와 동일하게 채울 것)
 USERS=(
   "tuna-web-vm:$(az vm show --resource-group "$RG" --name "$VM_NAME" --query identity.principalId -o tsv)"
-  "student612:538cff22-afa4-477f-a9d4-2fb598e05d02"
-  "former-employee:5ba6c831-9799-45a9-9124-a92e44dcaba0"
+  "<alias1>:<object_id1>"
+  "<alias2>:<object_id2>"
 )
 
 echo "── admin 토큰 발급 ──"
